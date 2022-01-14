@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERS="v1.5"
+VERS="v1.7"
 
 # Clear screen
 clear
