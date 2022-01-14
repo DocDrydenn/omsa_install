@@ -36,11 +36,6 @@ inoutheader() {
   echo -e "\e[32m=================================================="
   echo -e "==================================================\e[39m"
   echo " Dell OMSA Installer Script $VERS"
-
-  #[ $BUILD -eq 7 ] && echo -n " for ARMv7" && [ $STATIC -eq 1 ] && echo " (static)"
-  #[ $BUILD -eq 8 ] && echo -n " for ARMv8" && [ $STATIC -eq 1 ] && echo " (static)"
-  #[ $BUILD -eq 0 ] && echo -n " for x86-64" && [ $STATIC -eq 1 ] && echo " (static)"
-
   echo
   echo " by DocDrydenn"
   echo
@@ -187,8 +182,8 @@ then
   echo -e "\e[96m++ $PHASE - apt purge srvadmin-*\e[39m"
 else
   echo
-  #mkdir /opt/dell/srvadmin/sbin
-  #apt purge srvadmin-*
+  mkdir /opt/dell/srvadmin/sbin
+  apt purge srvadmin-*
 fi
 
 ### End Phase 1
@@ -210,10 +205,10 @@ then
   echo -e "\e[96m++ $PHASE - apt update\e[39m"
 else
   echo
-  #echo "deb https://linux.dell.com/repo/community/openmanage/10200/focal/ focal main" > /etc/apt/sources.list.d/linux.dell.com.sources.list
-  #wget https://linux.dell.com/repo/pgp_pubkeys/0x1285491434D8786F.asc
-  #apt-key add 0x1285491434D8786F.asc
-  #apt update
+  echo "deb https://linux.dell.com/repo/community/openmanage/10200/focal/ focal main" > /etc/apt/sources.list.d/linux.dell.com.sources.list
+  wget https://linux.dell.com/repo/pgp_pubkeys/0x1285491434D8786F.asc
+  apt-key add 0x1285491434D8786F.asc
+  apt update
 fi
 
 ### End Phase 2
@@ -251,26 +246,26 @@ then
   echo -e "\e[96m++ $PHASE - dpkg -i libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb\e[39m"
 else
   echo
-  #wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman-curl-client-transport1_2.6.5-0ubuntu3_amd64.deb
-  #wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman-client4_2.6.5-0ubuntu3_amd64.deb
-  #wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman1_2.6.5-0ubuntu3_amd64.deb
-  #wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman-server1_2.6.5-0ubuntu3_amd64.deb
-  #wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-sfcc/libcimcclient0_2.2.8-0ubuntu2_amd64.deb
-  #wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/openwsman_2.6.5-0ubuntu3_amd64.deb
-  #wget http://archive.ubuntu.com/ubuntu/pool/multiverse/c/cim-schema/cim-schema_2.48.0-0ubuntu1_all.deb
-  #wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-sfc-common/libsfcutil0_1.0.1-0ubuntu4_amd64.deb
-  #wget http://archive.ubuntu.com/ubuntu/pool/multiverse/s/sblim-sfcb/sfcb_1.4.9-0ubuntu5_amd64.deb
-  #wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-cmpi-devel/libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb
-  #dpkg -i libwsman-curl-client-transport1_2.6.5-0ubuntu3_amd64.deb
-  #dpkg -i libwsman-client4_2.6.5-0ubuntu3_amd64.deb
-  #dpkg -i libwsman1_2.6.5-0ubuntu3_amd64.deb
-  #dpkg -i libwsman-server1_2.6.5-0ubuntu3_amd64.deb
-  #dpkg -i libcimcclient0_2.2.8-0ubuntu2_amd64.deb
-  #dpkg -i openwsman_2.6.5-0ubuntu3_amd64.deb
-  #dpkg -i cim-schema_2.48.0-0ubuntu1_all.deb
-  #dpkg -i libsfcutil0_1.0.1-0ubuntu4_amd64.deb
-  #dpkg -i sfcb_1.4.9-0ubuntu5_amd64.deb
-  #dpkg -i libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb
+  wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman-curl-client-transport1_2.6.5-0ubuntu3_amd64.deb
+  wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman-client4_2.6.5-0ubuntu3_amd64.deb
+  wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman1_2.6.5-0ubuntu3_amd64.deb
+  wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman-server1_2.6.5-0ubuntu3_amd64.deb
+  wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-sfcc/libcimcclient0_2.2.8-0ubuntu2_amd64.deb
+  wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/openwsman_2.6.5-0ubuntu3_amd64.deb
+  wget http://archive.ubuntu.com/ubuntu/pool/multiverse/c/cim-schema/cim-schema_2.48.0-0ubuntu1_all.deb
+  wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-sfc-common/libsfcutil0_1.0.1-0ubuntu4_amd64.deb
+  wget http://archive.ubuntu.com/ubuntu/pool/multiverse/s/sblim-sfcb/sfcb_1.4.9-0ubuntu5_amd64.deb
+  wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-cmpi-devel/libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb
+  dpkg -i libwsman-curl-client-transport1_2.6.5-0ubuntu3_amd64.deb
+  dpkg -i libwsman-client4_2.6.5-0ubuntu3_amd64.deb
+  dpkg -i libwsman1_2.6.5-0ubuntu3_amd64.deb
+  dpkg -i libwsman-server1_2.6.5-0ubuntu3_amd64.deb
+  dpkg -i libcimcclient0_2.2.8-0ubuntu2_amd64.deb
+  dpkg -i openwsman_2.6.5-0ubuntu3_amd64.deb
+  dpkg -i cim-schema_2.48.0-0ubuntu1_all.deb
+  dpkg -i libsfcutil0_1.0.1-0ubuntu4_amd64.deb
+  dpkg -i sfcb_1.4.9-0ubuntu5_amd64.deb
+  dpkg -i libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb
 fi
 
 ### End Phase 3
@@ -290,8 +285,8 @@ then
   echo -e "\e[96m++ $PHASE - apt install srvadmin-all libncurses5 libxslt-dev\e[39m"
 else
   echo
-  #apt update
-  #apt install srvadmin-all libncurses5 libxslt-dev
+  apt update
+  apt install srvadmin-all libncurses5 libxslt-dev
 fi
 
 ### End Phase 4
@@ -310,7 +305,7 @@ then
   echo -e "\e[96m++ $PHASE - /opt/dell/srvadmin/sbin/srvadmin-services.sh restart\e[39m"
 else
   echo
-  #/opt/dell/srvadmin/sbin/srvadmin-services.sh restart
+  /opt/dell/srvadmin/sbin/srvadmin-services.sh restart
 fi
 
 # End Phase 5
