@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERS="v2.0"
+VERS="v2.0a"
 
 # Clear screen
 clear
@@ -16,7 +16,6 @@ DEBUG=0
 
 # Script Update Function
 self_update() {
-  echo "1. Self-Update:"
   cd "$SCRIPTPATH"
   timeout 1s git fetch --quiet
   timeout 1s git diff --quiet --exit-code "origin/$BRANCH" "$SCRIPTFILE"
@@ -113,8 +112,18 @@ trap 'errexit' ERR
 inoutheader
 inoutfooter
 
+
+#===========================================================================================================================================
+### Start Phase 0
+PHASE="Script_Self-Update"
+phaseheader $PHASE
+sleep 1
+#===========================================================================================================================================
 # Self Update
 self_update
+
+### End Phase 0
+phasefooter $PHASE
 
 #===========================================================================================================================================
 ### Start Phase 1
