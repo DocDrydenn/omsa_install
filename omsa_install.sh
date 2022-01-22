@@ -16,7 +16,7 @@ DEBUG=0
 
 # Script Update Function
 self_update() {
-  echo "2. Script Updates:"
+  echo "1. Self-Update:"
   cd "$SCRIPTPATH"
   timeout 1s git fetch --quiet
   timeout 1s git diff --quiet --exit-code "origin/$BRANCH" "$SCRIPTFILE"
@@ -39,6 +39,7 @@ self_update() {
     exit 1
     }
   echo "  ✓ Version: Current."
+  echo
 }
 
 # Error Trapping with Cleanup Function
@@ -101,9 +102,6 @@ usage_example() {
 # Error Trap
 trap 'errexit' ERR
 
-# Self Update
-self_update
-
 # Parse Commandline Arguments
 ([ "$1" = "-h" ] || [ "$1" = "h" ]) && usage_example
 ([ "$2" = "-h" ] || [ "$2" = "h" ]) && usage_example
@@ -114,6 +112,9 @@ self_update
 # Opening Intro
 inoutheader
 inoutfooter
+
+# Self Update
+self_update
 
 #===========================================================================================================================================
 ### Start Phase 1
