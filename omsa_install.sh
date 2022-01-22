@@ -5,7 +5,43 @@ VERS="v2.0"
 # Clear screen
 clear
 
-# Error Trapping with Cleanup
+# Set Script Update Strings
+SCRIPT="$(readlink -f "$0")"
+SCRIPTFILE="$(basename "$SCRIPT")"
+SCRIPTPATH="$(dirname "$SCRIPT")"
+SCRIPTNAME="$0"
+ARGS=( "$@" )
+BRANCH="main"
+DEBUG=0
+
+# Script Update Function
+self_update() {
+  echo "2. Script Updates:"
+  cd "$SCRIPTPATH"
+  timeout 1s git fetch --quiet
+  timeout 1s git diff --quiet --exit-code "origin/$BRANCH" "$SCRIPTFILE"
+  [ $? -eq 1 ] && {
+    echo "  ✗ Version: Mismatched."
+    echo "2a. Fetching Update:"
+    if [ -n "$(git status --porcelain)" ];  # opposite is -z
+    then
+      git stash push -m 'local changes stashed before self update' --quiet
+    fi
+    git pull --force --quiet
+    git checkout $BRANCH --quiet
+    git pull --force --quiet
+    echo "  ✓ Update Complete. Running New Version. Standby..."
+    sleep 3
+    cd - > /dev/null                        # return to original working dir
+    exec "$SCRIPTNAME" "${ARGS[@]}"
+
+    # Now exit this old instance
+    exit 1
+    }
+  echo "  ✓ Version: Current."
+}
+
+# Error Trapping with Cleanup Function
 errexit() {
   # Draw 5 lines of + and message
   for i in {1..5}; do echo "+"; done
@@ -50,110 +86,34 @@ inoutfooter() {
   echo
 }
 
-# Error Trap
-#trap 'errexit' ERR
-
-# Setup Variables
-SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-#BUILD=0
-DEBUG=0
-#STATIC=0
-USAGE=0
-
-# Parse Commandline Arguments
-([ "$1" = "d" ] || [ "$1" = "-d" ]) && DEBUG=1
-([ "$2" = "d" ] || [ "$2" = "-d" ]) && DEBUG=1
-([ "$3" = "d" ] || [ "$3" = "-d" ]) && DEBUG=1
-
-([ "$1" = "-h" ] || [ "$1" = "h" ]) && USAGE=1
-([ "$2" = "-h" ] || [ "$2" = "h" ]) && USAGE=1
-([ "$3" = "-h" ] || [ "$3" = "h" ]) && USAGE=1
-([ "$4" = "-h" ] || [ "$4" = "h" ]) && USAGE=1
-
-# Opening Intro
-inoutheader
-inoutfooter
-
-if [ $USAGE -eq 1 ]
-then
+# Usage Example Function
+usage_example() {
   echo " Usage:  ./omsa_install.sh [-dh]"
   echo
   echo "    -h | h    - Display (this) Usage Output"
   echo "    -d | d    - Enable Debug (Simulation-Only)"
   echo
+  inoutheader
+  inoutfooter
+  exit 0
+}
+
+# Error Trap
+trap 'errexit' ERR
+
+# Self Update
+self_update
+
+# Parse Commandline Arguments
+([ "$1" = "-h" ] || [ "$1" = "h" ]) && usage_example
+([ "$2" = "-h" ] || [ "$2" = "h" ]) && usage_example
+
+([ "$1" = "d" ] || [ "$1" = "-d" ]) && DEBUG=1
+([ "$2" = "d" ] || [ "$2" = "-d" ]) && DEBUG=1
+
+# Opening Intro
 inoutheader
 inoutfooter
-  exit 0
-fi
-
-# Check for curl
-if [[ $(which curl &>/dev/null; echo $?) != "0" ]] # Production
-then
-  echo "Warning: CURL not found."
-  echo
-  echo "This script uses CURL to check for updates."
-  echo
-  read -r -p "Do you want to continue without checking? (not recommended) [y/N] " response
-  curlresponse=${response,,}
-  if [[ $curlresponse =~ ^(no|n| ) ]] || [[ -z $curlresponse ]]
-  then
-    echo
-    echo "Note: This script can attempt to install CURL and try again."
-    echo
-    read -r -p "Would you like to install CURL and try again? (recommended) [Y/n] " response
-    installresponse=${response,,}
-    if [[ $installresponse =~ ^(yes|y| ) ]] || [[ -z $installresponse ]]
-    then
-      echo
-      echo "Attempting to install CURL..."
-      echo
-      apt install curl -y
-      echo
-      echo "Restarting script..."
-      echo
-      exec $0
-    else
-      echo
-      echo "Script Aborted."
-      exit 0
-    fi
-  else
-    echo
-    echo "Continuing..."
-    sleep 3
-  fi
-else
-  # New Version Notification/Prompt
-  LVER="$(curl -sI "https://github.com/DocDrydenn/omsa_install/releases/latest" | grep -Po 'tag\/\K(v\S+)')"
-
-  if [[ -z "$LVER" ]]
-  then
-    echo "Online Version check failed. Continuing..."
-    sleep 3
-  else
-    if [[ "$VERS" != "$LVER" ]]
-    then
-      echo -e "\e[5m\e[44m++ New Version Detected ++\e[39m\e[0m"
-      echo
-      echo " $VERS - Current"
-      echo " $LVER - Online"
-      echo
-      read -r -p "Do you want to continue anyway? (not recommended) [y/N] " response
-      response=${response,,}
-      if [[ $response =~ ^(no|n| ) ]] || [[ -z $response ]]
-      then
-        echo
-        echo "Script Aborted."
-        exit 0
-      else
-        echo
-        echo "Continuing..."
-        sleep 3
-      fi
-    fi
-  fi
-fi
-
 
 #===========================================================================================================================================
 ### Start Phase 1
