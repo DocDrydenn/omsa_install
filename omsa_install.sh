@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERS="v2.0b"
+VERS="v2.0c"
 
 # Clear screen
 clear
@@ -99,8 +99,6 @@ usage_example() {
   echo "    -h | h    - Display (this) Usage Output"
   echo "    -d | d    - Enable Debug (Simulation-Only)"
   echo
-  inoutheader
-  inoutfooter
   exit 0
 }
 
