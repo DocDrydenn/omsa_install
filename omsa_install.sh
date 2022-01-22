@@ -92,6 +92,8 @@ inoutfooter() {
 
 # Usage Example Function
 usage_example() {
+  inoutheader
+  inoutfooter
   echo " Usage:  ./omsa_install.sh [-dh]"
   echo
   echo "    -h | h    - Display (this) Usage Output"
