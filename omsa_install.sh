@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERS="v1.7"
+VERS="v2.0"
 
 # Clear screen
 clear
@@ -40,7 +40,7 @@ inoutheader() {
   echo " by DocDrydenn"
   echo
 
-  if [[ "$DEBUG" = "1" ]]; then echo -e "\e[5m\e[96m++ DEBUG ENABLED - SIMULATION ONLY++\e[39m\e[0m"; echo; fi
+  if [[ "$DEBUG" = "1" ]]; then echo -e "\e[5m\e[96m++ DEBUG ENABLED - SIMULATION ONLY ++\e[39m\e[0m"; echo; fi
 }
 
 # Intro/Outro Footer
@@ -61,16 +61,9 @@ DEBUG=0
 USAGE=0
 
 # Parse Commandline Arguments
-#([ "$1" = "7" ] || [ "$1" = "-7" ]) && BUILD=7
-#([ "$1" = "8" ] || [ "$1" = "-8" ]) && BUILD=8
-
 ([ "$1" = "d" ] || [ "$1" = "-d" ]) && DEBUG=1
 ([ "$2" = "d" ] || [ "$2" = "-d" ]) && DEBUG=1
 ([ "$3" = "d" ] || [ "$3" = "-d" ]) && DEBUG=1
-
-#([ "$1" = "-s" ] || [ "$1" = "s" ]) && STATIC=1
-#([ "$2" = "-s" ] || [ "$2" = "s" ]) && STATIC=1
-#([ "$3" = "-s" ] || [ "$3" = "s" ]) && STATIC=1
 
 ([ "$1" = "-h" ] || [ "$1" = "h" ]) && USAGE=1
 ([ "$2" = "-h" ] || [ "$2" = "h" ]) && USAGE=1
@@ -85,14 +78,8 @@ if [ $USAGE -eq 1 ]
 then
   echo " Usage:  ./omsa_install.sh [-dh]"
   echo
-  #echo "    -0 | 0 | <blank>      - x86-64"
-  #echo "    -7 | 7                - ARMv7"
-  #echo "    -8 | 8                - ARMv8"
-  #echo
-  #echo "    -s | s                - Build Static"
-  #echo
-  echo "    -h | h                - Display (this) Usage Output"
-  echo "    -d | d                - Enable Debug"
+  echo "    -h | h    - Display (this) Usage Output"
+  echo "    -d | d    - Enable Debug (Simulation-Only)"
   echo
 inoutheader
 inoutfooter
