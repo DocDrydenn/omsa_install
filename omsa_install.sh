@@ -240,8 +240,8 @@ else
   [[ -f "/etc/apt/sources.list.d/linux.dell.com.sources.list" ]] && rm /etc/apt/sources.list.d/linux.dell.com.sources.list
   [[ ! -d "/opt/dell/srvadmin/sbin" ]] && mkdir /opt/dell/srvadmin/sbin
 
-  if dpkg --get-selections | grep -q "^srvadmin-*[[:space:]]*install$" >/dev/null; then
-    apt purge srvadmin-*
+  if dpkg-query -W --showformat='${Status}\n' srvadmin-*|grep "install ok installed" >/dev/null; then
+    apt purge srvadmin-* -y
   fi
 fi
 
