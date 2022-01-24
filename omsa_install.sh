@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERS="v2.5"
+VERS="v2.7"
 
 # Set Script Variables
 SCRIPT="$(readlink -f "$0")"
@@ -368,7 +368,7 @@ then
 else
   echo
   apt update
-  apt install srvadmin-all libncurses5 libxslt-dev
+  apt install srvadmin-all libncurses5 libxslt-dev -y
 fi
 
 ### End Phase 4
@@ -396,9 +396,11 @@ phasefooter $PHASE
 #===========================================================================================================================================
 # Close Out
 inoutheader
-echo " srvadmin-services.sh Location: /opt/dell/srvadmin/sbin/"
+echo "Service Control: /opt/dell/srvadmin/sbin/srvadmin-services.sh"
 echo
-echo " Relogin to refresh paths."
+echo "Web Access: https://localhost:1311"
+echo
+echo "Note: Re-login needed before user paths will refresh."
 echo
 inoutfooter
 
