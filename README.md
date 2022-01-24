@@ -1,20 +1,20 @@
-# omsa_install
+# omsa_install.sh
 Simple automated script I use to install Dell OMSA on my Dell PowerEdge R720xd and R510 servers. (might work for other series, too)
 
-Tested on Debian-based OS's (Debian 10, Debian 11, Ubuntu, Proxmox, etc...)
+Tested on Debian-based OS's *(Debian 10, Debian 11, Ubuntu, Proxmox, etc...)*
 
 Script will parse the Dell repo for available OMSA versions/builds and will prompt the user to select what they want.
-Note: The parsing can take up to 30 seconds... due to the Dell website, not this script.
+*Note: The parsing can take up to 30 seconds... due to the Dell website, not this script.*
 
 ## Requirements:
-- Git (Needed for install and self-update to work)
+- Git *(Needed for install and self-update to work)*
 
 ## Install:
 This script is self-updating and uses Git commands to make the needed changes, therefore, it must be installed via a git clone.
 
 `git clone https://github.com/DocDrydenn/omsa_install.git`
 
-(Future update will allow the user to skip the self-update function, allowing it to be "installed" and run from outside of a git clone.)
+*(Future update will allow the user to skip the self-update function, allowing it to be "installed" and run from outside of a git clone.)*
 
 ## Usage:
 ```
