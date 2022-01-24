@@ -65,8 +65,6 @@ errexit() {
 createmenu_version ()
 {
   echo "Select desired version:"
-#  echo "Size of array: $#"
-#  echo "$@"
   select option; do # in "$@" is the default
     if [ "$REPLY" -eq 1 ];
     then
@@ -89,8 +87,6 @@ createmenu_version ()
 createmenu_build ()
 {
   echo "Select desired build:"
-#  echo "Size of array: $#"
-#  echo "$@"
   select option; do # in "$@" is the default
     if [ "$REPLY" -eq 1 ];
     then
@@ -189,6 +185,8 @@ PHASE="Version-Build_Selection"
 phaseheader $PHASE
 sleep 1
 #===========================================================================================================================================
+echo "Parsing Dell website for available versions..."
+echo
 # Parse RAW Dell Website
 IFS=$'\n' read -r -d '' -a RAW_VERSION_ARRAY < <( wget -q $URL -O - | tr "\t\r\n'" '   "' | grep -i -o '<a[^>]\+href[ ]*=[ \t]*"[^"]\+">[^<]*</a>' | sed -e 's/^.*"\([^"]\+\)".*$/\1/g' && printf '\0' )
 
@@ -201,6 +199,9 @@ done
 # Prompt for Desired Version
 createmenu_version "${VERSION_ARRAY[@]}"
 
+echo
+echo "Parsing Dell website for available builds..."
+echo
 # Parse RAW Builds
 IFS=$'\n' read -r -d '' -a RAW_BUILD_ARRAY < <( wget -q $USR_VER_URL -O - | tr "\t\r\n'" '   "' | grep -i -o '<a[^>]\+href[ ]*=[ \t]*"[^"]\+">[^<]*</a>' | sed -e 's/^.*"\([^"]\+\)".*$/\1/g' && printf '\0' )
 
@@ -214,6 +215,7 @@ done
 createmenu_build "${BUILD_ARRAY[@]}"
 
 #echo "Final URL: $FINAL_URL"
+echo
 
 ### End Phase 0.5
 phasefooter $PHASE
