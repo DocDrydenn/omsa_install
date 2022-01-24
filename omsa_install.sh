@@ -185,7 +185,8 @@ PHASE="Version-Build_Selection"
 phaseheader $PHASE
 sleep 1
 #===========================================================================================================================================
-echo "Parsing Dell website for available versions..."
+echo "Parsing for available versions."
+echo "(this can take up to 30 seconds)"
 echo
 # Parse RAW Dell Website
 IFS=$'\n' read -r -d '' -a RAW_VERSION_ARRAY < <( wget -q $URL -O - | tr "\t\r\n'" '   "' | grep -i -o '<a[^>]\+href[ ]*=[ \t]*"[^"]\+">[^<]*</a>' | sed -e 's/^.*"\([^"]\+\)".*$/\1/g' && printf '\0' )
@@ -200,7 +201,8 @@ done
 createmenu_version "${VERSION_ARRAY[@]}"
 
 echo
-echo "Parsing Dell website for available builds..."
+echo "Parsing for available builds..."
+echo "(this can take up to 30 seconds)"
 echo
 # Parse RAW Builds
 IFS=$'\n' read -r -d '' -a RAW_BUILD_ARRAY < <( wget -q $USR_VER_URL -O - | tr "\t\r\n'" '   "' | grep -i -o '<a[^>]\+href[ ]*=[ \t]*"[^"]\+">[^<]*</a>' | sed -e 's/^.*"\([^"]\+\)".*$/\1/g' && printf '\0' )
