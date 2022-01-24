@@ -232,10 +232,12 @@ sleep 1
 
 if [ $DEBUG -eq 1 ]
 then
+  echo -e "\e[96m++ $PHASE - rm /etc/apt/sources.list.d/linux.dell.com.sources.list"
   echo -e "\e[96m++ $PHASE - mkdir /opt/dell/srvadmin/sbin\e[39m"
   echo -e "\e[96m++ $PHASE - apt purge srvadmin-*\e[39m"
 else
   echo
+  rm /etc/apt/sources.list.d/linux.dell.com.sources.list
   mkdir /opt/dell/srvadmin/sbin
   apt purge srvadmin-*
 fi
