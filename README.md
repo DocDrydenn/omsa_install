@@ -1,7 +1,11 @@
 # omsa_install
 Simple automated script I use to install Dell OMSA on my Dell PowerEdge R720xd and R510 servers. (might work for other series, too)
 
-Tested on Debian 10 & Debian 11 based builds (including Ubuntu, Proxmox, etc...)
+Tested on Debian-based OS's (Debian 10, Debian 11, Ubuntu, Proxmox, etc...)
+
+Script will parse the Dell repo for available OMSA versions/builds and will prompt the user to select what they want.
+Note: The parsing can take up to 30 seconds... due to the Dell website, not this script.
+
 ## Requirements:
 - Git (Needed for install and self-update to work)
 
