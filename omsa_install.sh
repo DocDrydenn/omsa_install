@@ -1,11 +1,8 @@
 #!/bin/bash
 
-VERS="v2.0c"
+VERS="v2.5"
 
-# Clear screen
-clear
-
-# Set Script Update Strings
+# Set Script Variables
 SCRIPT="$(readlink -f "$0")"
 SCRIPTFILE="$(basename "$SCRIPT")"
 SCRIPTPATH="$(dirname "$SCRIPT")"
@@ -13,6 +10,15 @@ SCRIPTNAME="$0"
 ARGS=( "$@" )
 BRANCH="main"
 DEBUG=0
+URL='linux.dell.com/repo/community/openmanage/'
+RAW_VERSION_ARRAY=()
+VERSION_ARRAY=('Cancel')
+VERSION=""
+RAW_BUILD_ARRAY=()
+BUILD_ARRAY=('Cancel')
+BUILD=""
+USR_VER_URL=""
+FINAL_URL=""
 
 # Script Update Function
 self_update() {
@@ -53,6 +59,53 @@ errexit() {
 
   # Dirty Exit
   exit 1
+}
+
+# Version Menu
+createmenu_version ()
+{
+  echo "Select desired version:"
+#  echo "Size of array: $#"
+#  echo "$@"
+  select option; do # in "$@" is the default
+    if [ "$REPLY" -eq 1 ];
+    then
+      echo "Exiting..."
+      exit 0
+      break;
+    elif [ "$REPLY" -ge 1 ] && [ "$REPLY" -le $# ];
+    then
+      #echo "You selected $option which is option $REPLY"
+      USR_VER_URL=$URL$option
+      VERSION=${option%?}
+      break;
+    else
+      echo "Incorrect Input: Select a number 1-$#"
+    fi
+  done
+}
+
+# Build Menu
+createmenu_build ()
+{
+  echo "Select desired build:"
+#  echo "Size of array: $#"
+#  echo "$@"
+  select option; do # in "$@" is the default
+    if [ "$REPLY" -eq 1 ];
+    then
+      echo "Exiting..."
+      exit 0
+      break;
+    elif [ "$REPLY" -ge 1 ] && [ "$REPLY" -le $# ];
+    then
+      FINAL_URL=$USR_VER_URL$option
+      BUILD=${option%?}
+      break;
+    else
+      echo "Incorrect Input: Select a number 1-$#"
+    fi
+  done
 }
 
 # Phase Header
@@ -113,6 +166,7 @@ trap 'errexit' ERR
 ([ "$2" = "d" ] || [ "$2" = "-d" ]) && DEBUG=1
 
 # Opening Intro
+clear
 inoutheader
 inoutfooter
 
@@ -127,6 +181,41 @@ sleep 1
 self_update
 
 ### End Phase 0
+phasefooter $PHASE
+
+#===========================================================================================================================================
+### Start Phase 0.5
+PHASE="Version-Build_Selection"
+phaseheader $PHASE
+sleep 1
+#===========================================================================================================================================
+# Parse RAW Dell Website
+IFS=$'\n' read -r -d '' -a RAW_VERSION_ARRAY < <( wget -q $URL -O - | tr "\t\r\n'" '   "' | grep -i -o '<a[^>]\+href[ ]*=[ \t]*"[^"]\+">[^<]*</a>' | sed -e 's/^.*"\([^"]\+\)".*$/\1/g' && printf '\0' )
+
+# Parse for Versions
+for i in "${RAW_VERSION_ARRAY[@]}"
+do
+  [[ $i == [0-9]* ]] && [[ ${#i} -gt 2 ]] && VERSION_ARRAY+=($i)
+done
+
+# Prompt for Desired Version
+createmenu_version "${VERSION_ARRAY[@]}"
+
+# Parse RAW Builds
+IFS=$'\n' read -r -d '' -a RAW_BUILD_ARRAY < <( wget -q $USR_VER_URL -O - | tr "\t\r\n'" '   "' | grep -i -o '<a[^>]\+href[ ]*=[ \t]*"[^"]\+">[^<]*</a>' | sed -e 's/^.*"\([^"]\+\)".*$/\1/g' && printf '\0' )
+
+# Parse for Builds
+for i in "${RAW_BUILD_ARRAY[@]}"
+do
+  [[ $i == [a-z]* ]] && BUILD_ARRAY+=($i)
+done
+
+# Prompt for Desired Build
+createmenu_build "${BUILD_ARRAY[@]}"
+
+#echo "Final URL: $FINAL_URL"
+
+### End Phase 0.5
 phasefooter $PHASE
 
 #===========================================================================================================================================
@@ -160,13 +249,13 @@ sleep 1
 
 if [ $DEBUG -eq 1 ]
 then
-  echo -e "\e[96m++ $PHASE - deb https://linux.dell.com/repo/community/openmanage/10200/focal/ focal main > /etc/apt/sources.list.d/linux.dell.com.sources.list\e[39m"
+  echo -e "\e[96m++ $PHASE - deb https://$FINAL_URL $BUILD main > /etc/apt/sources.list.d/linux.dell.com.sources.list\e[39m"
   echo -e "\e[96m++ $PHASE - wget https://linux.dell.com/repo/pgp_pubkeys/0x1285491434D8786F.asc\e[39m"
   echo -e "\e[96m++ $PHASE - apt-key add 0x1285491434D8786F.asc\e[39m"
   echo -e "\e[96m++ $PHASE - apt update\e[39m"
 else
   echo
-  echo "deb https://linux.dell.com/repo/community/openmanage/10200/focal/ focal main" > /etc/apt/sources.list.d/linux.dell.com.sources.list
+  echo "deb https://$FINAL_URL $BUILD main" > /etc/apt/sources.list.d/linux.dell.com.sources.list
   wget https://linux.dell.com/repo/pgp_pubkeys/0x1285491434D8786F.asc
   apt-key add 0x1285491434D8786F.asc
   apt update
