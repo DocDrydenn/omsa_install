@@ -262,12 +262,14 @@ then
   echo -e "\e[96m++ $PHASE - wget https://linux.dell.com/repo/pgp_pubkeys/0x1285491434D8786F.asc\e[39m"
   echo -e "\e[96m++ $PHASE - apt-key add 0x1285491434D8786F.asc\e[39m"
   echo -e "\e[96m++ $PHASE - apt update\e[39m"
+  echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/0x1285491434D8786F.asc\e[39m"
 else
   echo
   echo "deb https://$FINAL_URL $BUILD main" > /etc/apt/sources.list.d/linux.dell.com.sources.list
   wget https://linux.dell.com/repo/pgp_pubkeys/0x1285491434D8786F.asc
   apt-key add 0x1285491434D8786F.asc
   apt update
+  rm $SCRIPTPATH/0x1285491434D8786F.asc
 fi
 
 ### End Phase 2
@@ -303,6 +305,17 @@ then
   echo -e "\e[96m++ $PHASE - dpkg -i libsfcutil0_1.0.1-0ubuntu4_amd64.deb\e[39m"
   echo -e "\e[96m++ $PHASE - dpkg -i sfcb_1.4.9-0ubuntu5_amd64.deb\e[39m"
   echo -e "\e[96m++ $PHASE - dpkg -i libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/libwsman-curl-client-transport1_2.6.5-0ubuntu3_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/libwsman-client4_2.6.5-0ubuntu3_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/libwsman1_2.6.5-0ubuntu3_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/libwsman-server1_2.6.5-0ubuntu3_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/libcimcclient0_2.2.8-0ubuntu2_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/openwsman_2.6.5-0ubuntu3_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/cim-schema_2.48.0-0ubuntu1_all.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/libsfcutil0_1.0.1-0ubuntu4_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/sfcb_1.4.9-0ubuntu5_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb\e[39m"
+
 else
   echo
   wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman-curl-client-transport1_2.6.5-0ubuntu3_amd64.deb
@@ -325,6 +338,16 @@ else
   dpkg -i libsfcutil0_1.0.1-0ubuntu4_amd64.deb
   dpkg -i sfcb_1.4.9-0ubuntu5_amd64.deb
   dpkg -i libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb
+  rm $SCRIPTPATH/libwsman-curl-client-transport1_2.6.5-0ubuntu3_amd64.deb
+  rm $SCRIPTPATH/libwsman-client4_2.6.5-0ubuntu3_amd64.deb
+  rm $SCRIPTPATH/libwsman1_2.6.5-0ubuntu3_amd64.deb
+  rm $SCRIPTPATH/libwsman-server1_2.6.5-0ubuntu3_amd64.deb
+  rm $SCRIPTPATH/libcimcclient0_2.2.8-0ubuntu2_amd64.deb
+  rm $SCRIPTPATH/openwsman_2.6.5-0ubuntu3_amd64.deb
+  rm $SCRIPTPATH/cim-schema_2.48.0-0ubuntu1_all.deb
+  rm $SCRIPTPATH/libsfcutil0_1.0.1-0ubuntu4_amd64.deb
+  rm $SCRIPTPATH/sfcb_1.4.9-0ubuntu5_amd64.deb
+  rm $SCRIPTPATH/libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb
 fi
 
 ### End Phase 3
