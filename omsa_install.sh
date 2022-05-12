@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERS="v2.7"
+VERS="v2.8"
 
 # Set Script Variables
 SCRIPT="$(readlink -f "$0")"
@@ -233,12 +233,12 @@ sleep 1
 if [ $DEBUG -eq 1 ]
 then
   echo -e "\e[96m++ $PHASE - [[ -f /etc/apt/sources.list.d/linux.dell.com.sources.list ]] && rm /etc/apt/sources.list.d/linux.dell.com.sources.list"
-  echo -e "\e[96m++ $PHASE - mkdir /opt/dell/srvadmin/sbin\e[39m"
+  echo -e "\e[96m++ $PHASE - mkdir -p /opt/dell/srvadmin/sbin\e[39m"
   echo -e "\e[96m++ $PHASE - apt purge srvadmin-*\e[39m"
 else
   echo
   [[ -f "/etc/apt/sources.list.d/linux.dell.com.sources.list" ]] && rm /etc/apt/sources.list.d/linux.dell.com.sources.list
-  [[ ! -d "/opt/dell/srvadmin/sbin" ]] && mkdir /opt/dell/srvadmin/sbin
+  [[ ! -d "/opt/dell/srvadmin/sbin" ]] && mkdir -p /opt/dell/srvadmin/sbin
 
   if dpkg-query -W --showformat='${Status}\n' srvadmin-*|grep "install ok installed" >/dev/null; then
     apt purge srvadmin-* -y
