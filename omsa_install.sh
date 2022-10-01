@@ -182,7 +182,7 @@ phaseheader $PHASE
 sleep 1
 #===========================================================================================================================================
 # Self Update
-#self_update
+self_update
 
 ### End Phase 0
 phasefooter $PHASE
