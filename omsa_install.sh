@@ -306,11 +306,11 @@ sleep 1
   dist_key="old"
 
   if [[ "$OS" == *"Debian"* ]]; then
-    if vercomp $OSVER \> 10; then
+    if vercomp $OSVER \> 11; then
       dist_key="new"
     fi
   elif [[ "$OS" == *"Ubuntu"* ]]; then
-    if vercomp $OSVER \> 22.09; then
+    if vercomp $OSVER \> 22.04; then
       dist_key="new"
     fi
   fi
