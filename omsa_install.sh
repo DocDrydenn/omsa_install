@@ -310,7 +310,7 @@ sleep 1
       dist_key="new"
     fi
   elif [[ "$OS" == *"Ubuntu"* ]]; then
-    if vercomp $OSVER \> 22.04; then
+    if vercomp $OSVER \> 22.00; then
       dist_key="new"
     fi
   fi
