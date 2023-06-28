@@ -349,7 +349,7 @@ sleep 1
   wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/openwsman_2.6.5-0ubuntu3_amd64.deb
   wget http://archive.ubuntu.com/ubuntu/pool/multiverse/c/cim-schema/cim-schema_2.48.0-0ubuntu1_all.deb
   wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-sfc-common/libsfcutil0_1.0.1-0ubuntu4_amd64.deb
-  wget http://archive.ubuntu.com/ubuntu/pool/multiverse/s/sblim-sfcb/sfcb_1.4.9-0ubuntu5_amd64.deb
+  wget http://archive.ubuntu.com/ubuntu/pool/multiverse/s/sblim-sfcb/sfcb_1.4.9-0ubuntu7_amd64.deb
   wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-cmpi-devel/libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb
   
   # Install
@@ -361,7 +361,7 @@ sleep 1
   dpkg -i openwsman_2.6.5-0ubuntu3_amd64.deb
   dpkg -i cim-schema_2.48.0-0ubuntu1_all.deb
   dpkg -i libsfcutil0_1.0.1-0ubuntu4_amd64.deb
-  dpkg -i sfcb_1.4.9-0ubuntu5_amd64.deb
+  dpkg -i sfcb_1.4.9-0ubuntu7_amd64.deb
   dpkg -i libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb
 
   # Cleanup
@@ -373,7 +373,7 @@ sleep 1
   rm "$SCRIPTPATH/openwsman_2.6.5-0ubuntu3_amd64.deb"
   rm "$SCRIPTPATH/cim-schema_2.48.0-0ubuntu1_all.deb"
   rm "$SCRIPTPATH/libsfcutil0_1.0.1-0ubuntu4_amd64.deb"
-  rm "$SCRIPTPATH/sfcb_1.4.9-0ubuntu5_amd64.deb"
+  rm "$SCRIPTPATH/sfcb_1.4.9-0ubuntu7_amd64.deb"
   rm "$SCRIPTPATH/libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb"
 
 ### End Phase 3
