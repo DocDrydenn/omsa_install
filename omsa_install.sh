@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERS="v3.0"
+VERS="v2.9"
 
 # Set Script Variables
 SCRIPT="$(readlink -f "$0")"
@@ -13,6 +13,7 @@ DEBUG=0
 URL='linux.dell.com/repo/community/openmanage/'
 RAW_VERSION_ARRAY=()
 VERSION_ARRAY=('Cancel')
+#VERSION=""
 RAW_BUILD_ARRAY=()
 BUILD_ARRAY=('Cancel')
 BUILD=""
@@ -56,39 +57,6 @@ self_update() {
     else
         echo "   ✗ Git Clone Not Detected: Skipping Update Check"
     fi
-}
-
-# Identify current Linux Distro
-linux_dist() {
-if [ -f /etc/os-release ]; then
-    # freedesktop.org and systemd
-    . /etc/os-release
-    OS=$NAME
-    OSVER=$VERSION_ID
-elif type lsb_release >/dev/null 2>&1; then
-    # linuxbase.org
-    OS=$(lsb_release -si)
-    OSVER=$(lsb_release -sr)
-elif [ -f /etc/lsb-release ]; then
-    # For some versions of Debian/Ubuntu without lsb_release command
-    . /etc/lsb-release
-    OS=$DISTRIB_ID
-    OSVER=$DISTRIB_RELEASE
-elif [ -f /etc/debian_version ]; then
-    # Older Debian/Ubuntu/etc.
-    OS=Debian
-    OSVER=$(cat /etc/debian_version)
-elif [ -f /etc/SuSe-release ]; then
-    # Older SuSE/etc.
-    ...
-elif [ -f /etc/redhat-release ]; then
-    # Older Red Hat, CentOS, etc.
-    ...
-else
-    # Fall back to uname, e.g. "Linux <version>", also works for BSD, etc.
-    OS=$(uname -s)
-    OSVER=$(uname -r)
-fi
 }
 
 # Error Trapping with Cleanup Function
@@ -142,13 +110,6 @@ createmenu_build ()
       echo "Incorrect Input: Select a number 1-$#"
     fi
   done
-}
-
-# OSVersion Check
-vercomp(){
-   local a b IFS=. -; set -f
-   printf -v a %08d $1; printf -v b %08d $3
-   test $a "$2" $b
 }
 
 # Phase Header
@@ -213,7 +174,6 @@ clear
 inoutheader
 inoutfooter
 
-linux_dist
 
 #===========================================================================================================================================
 ### Start Phase 0
@@ -225,7 +185,6 @@ sleep 1
 self_update
 
 ### End Phase 0
-echo
 phasefooter $PHASE
 
 #===========================================================================================================================================
@@ -265,8 +224,10 @@ done
 # Prompt for Desired Build
 createmenu_build "${BUILD_ARRAY[@]}"
 
-### End Phase 0.5
+#echo "Final URL: $FINAL_URL"
 echo
+
+### End Phase 0.5
 phasefooter $PHASE
 
 #===========================================================================================================================================
@@ -277,17 +238,22 @@ sleep 1
 #===========================================================================================================================================
 # Purge Everything OMSA
 
+if [ $DEBUG -eq 1 ]
+then
+  echo -e "\e[96m++ $PHASE - [[ -f /etc/apt/sources.list.d/linux.dell.com.sources.list ]] && rm /etc/apt/sources.list.d/linux.dell.com.sources.list"
+  echo -e "\e[96m++ $PHASE - mkdir -p /opt/dell/srvadmin/sbin\e[39m"
+  echo -e "\e[96m++ $PHASE - apt purge srvadmin-*\e[39m"
+else
   echo
   [[ -f "/etc/apt/sources.list.d/linux.dell.com.sources.list" ]] && rm /etc/apt/sources.list.d/linux.dell.com.sources.list
   [[ ! -d "/opt/dell/srvadmin/sbin" ]] && mkdir -p /opt/dell/srvadmin/sbin
-  [[ -f "/etc/apt/trusted.gpg.d/dell.gpg" ]] && rm /etc/apt/trusted.gpg.d/dell.gpg
 
   if dpkg-query -W --showformat='${Status}\n' srvadmin-*|grep "install ok installed" >/dev/null; then
     apt purge srvadmin-* -y
   fi
+fi
 
 ### End Phase 1
-echo
 phasefooter $PHASE
 
 #===========================================================================================================================================
@@ -298,36 +264,23 @@ sleep 1
 #===========================================================================================================================================
 # Setup Repo
 
-  echo
-  echo $OS - $OSVER
+if [ $DEBUG -eq 1 ]
+then
+  echo -e "\e[96m++ $PHASE - deb https://$FINAL_URL $BUILD main > /etc/apt/sources.list.d/linux.dell.com.sources.list\e[39m"
+  echo -e "\e[96m++ $PHASE - wget https://linux.dell.com/repo/pgp_pubkeys/0x1285491434D8786F.asc\e[39m"
+  echo -e "\e[96m++ $PHASE - apt-key add 0x1285491434D8786F.asc\e[39m"
+  echo -e "\e[96m++ $PHASE - apt update\e[39m"
+  echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/0x1285491434D8786F.asc\e[39m"
+else
   echo
   echo "deb https://$FINAL_URL $BUILD main" > /etc/apt/sources.list.d/linux.dell.com.sources.list
-
-  dist_key="old"
-
-  if [[ "$OS" == *"Debian"* ]]; then
-    if vercomp $OSVER \> 11; then
-      dist_key="new"
-    fi
-  elif [[ "$OS" == *"Ubuntu"* ]]; then
-    if vercomp $OSVER \> 22.00; then
-      dist_key="new"
-    fi
-  fi
-  
   wget https://linux.dell.com/repo/pgp_pubkeys/0x1285491434D8786F.asc
-  
-  if [[ "$dist_key" = "old" ]]; then
-    apt-key add $SCRIPTPATH/0x1285491434D8786F.asc
-  else
-    gpg -o /etc/apt/trusted.gpg.d/dell.gpg --dearmor $SCRIPTPATH/0x1285491434D8786F.asc
-  fi
-  
+  apt-key add 0x1285491434D8786F.asc
   apt update
   rm "$SCRIPTPATH/0x1285491434D8786F.asc"
+fi
 
 ### End Phase 2
-echo
 phasefooter $PHASE
 
 #===========================================================================================================================================
@@ -338,50 +291,74 @@ sleep 1
 #===========================================================================================================================================
 # Get Special Dependancies
 
+if [ $DEBUG -eq 1 ]
+then
+  echo -e "\e[96m++ $PHASE - wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman-curl-client-transport1_2.6.5-0ubuntu3_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman-client4_2.6.5-0ubuntu3_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman1_2.6.5-0ubuntu3_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman-server1_2.6.5-0ubuntu3_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-sfcc/libcimcclient0_2.2.8-0ubuntu2_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/openwsman_2.6.5-0ubuntu3_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - wget http://archive.ubuntu.com/ubuntu/pool/multiverse/c/cim-schema/cim-schema_2.48.0-0ubuntu1_all.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-sfc-common/libsfcutil0_1.0.1-0ubuntu4_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - wget http://archive.ubuntu.com/ubuntu/pool/multiverse/s/sblim-sfcb/sfcb_1.4.9-0ubuntu5_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-cmpi-devel/libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - dpkg -i libwsman-curl-client-transport1_2.6.5-0ubuntu3_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - dpkg -i libwsman-client4_2.6.5-0ubuntu3_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - dpkg -i libwsman1_2.6.5-0ubuntu3_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - dpkg -i libwsman-server1_2.6.5-0ubuntu3_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - dpkg -i libcimcclient0_2.2.8-0ubuntu2_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - dpkg -i openwsman_2.6.5-0ubuntu3_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - dpkg -i cim-schema_2.48.0-0ubuntu1_all.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - dpkg -i libsfcutil0_1.0.1-0ubuntu4_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - dpkg -i sfcb_1.4.9-0ubuntu5_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - dpkg -i libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/libwsman-curl-client-transport1_2.6.5-0ubuntu3_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/libwsman-client4_2.6.5-0ubuntu3_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/libwsman1_2.6.5-0ubuntu3_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/libwsman-server1_2.6.5-0ubuntu3_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/libcimcclient0_2.2.8-0ubuntu2_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/openwsman_2.6.5-0ubuntu3_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/cim-schema_2.48.0-0ubuntu1_all.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/libsfcutil0_1.0.1-0ubuntu4_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/sfcb_1.4.9-0ubuntu5_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb\e[39m"
+
+else
   echo
-
-  if [[ "$dist_key" = "new" ]]; then
-    apt install libwsman-curl-client-transport1 libwsman-client4 libwsman1 libwsman-server1 libcimcclient0 openwsman cim-schema libsfcutil0 sfcb libcmpicppimpl0 -y
-  else
-    # Download
-    wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman-curl-client-transport1_2.6.5-0ubuntu3_amd64.deb
-    wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman-client4_2.6.5-0ubuntu3_amd64.deb
-    wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman1_2.6.5-0ubuntu3_amd64.deb
-    wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman-server1_2.6.5-0ubuntu3_amd64.deb
-    wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-sfcc/libcimcclient0_2.2.8-0ubuntu2_amd64.deb
-    wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/openwsman_2.6.5-0ubuntu3_amd64.deb
-    wget http://archive.ubuntu.com/ubuntu/pool/multiverse/c/cim-schema/cim-schema_2.48.0-0ubuntu1_all.deb
-    wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-sfc-common/libsfcutil0_1.0.1-0ubuntu4_amd64.deb
-    wget http://archive.ubuntu.com/ubuntu/pool/multiverse/s/sblim-sfcb/sfcb_1.4.9-0ubuntu5_amd64.deb
-    wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-cmpi-devel/libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb
-  
-    # Install
-    dpkg -i libwsman-curl-client-transport1_2.6.5-0ubuntu3_amd64.deb
-    dpkg -i libwsman-client4_2.6.5-0ubuntu3_amd64.deb
-    dpkg -i libwsman1_2.6.5-0ubuntu3_amd64.deb
-    dpkg -i libwsman-server1_2.6.5-0ubuntu3_amd64.deb
-    dpkg -i libcimcclient0_2.2.8-0ubuntu2_amd64.deb
-    dpkg -i openwsman_2.6.5-0ubuntu3_amd64.deb
-    dpkg -i cim-schema_2.48.0-0ubuntu1_all.deb
-    dpkg -i libsfcutil0_1.0.1-0ubuntu4_amd64.deb
-    dpkg -i sfcb_1.4.9-0ubuntu5_amd64.deb
-    dpkg -i libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb
-
-    # Cleanup
-    rm "$SCRIPTPATH/libwsman-curl-client-transport1_2.6.5-0ubuntu3_amd64.deb"
-    rm "$SCRIPTPATH/libwsman-client4_2.6.5-0ubuntu3_amd64.deb"
-    rm "$SCRIPTPATH/libwsman1_2.6.5-0ubuntu3_amd64.deb"
-    rm "$SCRIPTPATH/libwsman-server1_2.6.5-0ubuntu3_amd64.deb"
-    rm "$SCRIPTPATH/libcimcclient0_2.2.8-0ubuntu2_amd64.deb"
-    rm "$SCRIPTPATH/openwsman_2.6.5-0ubuntu3_amd64.deb"
-    rm "$SCRIPTPATH/cim-schema_2.48.0-0ubuntu1_all.deb"
-    rm "$SCRIPTPATH/libsfcutil0_1.0.1-0ubuntu4_amd64.deb"
-    rm "$SCRIPTPATH/sfcb_1.4.9-0ubuntu5_amd64.deb"
-    rm "$SCRIPTPATH/libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb"
-  fi
+  wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman-curl-client-transport1_2.6.5-0ubuntu3_amd64.deb
+  wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman-client4_2.6.5-0ubuntu3_amd64.deb
+  wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman1_2.6.5-0ubuntu3_amd64.deb
+  wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman-server1_2.6.5-0ubuntu3_amd64.deb
+  wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-sfcc/libcimcclient0_2.2.8-0ubuntu2_amd64.deb
+  wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/openwsman_2.6.5-0ubuntu3_amd64.deb
+  wget http://archive.ubuntu.com/ubuntu/pool/multiverse/c/cim-schema/cim-schema_2.48.0-0ubuntu1_all.deb
+  wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-sfc-common/libsfcutil0_1.0.1-0ubuntu4_amd64.deb
+  wget http://archive.ubuntu.com/ubuntu/pool/multiverse/s/sblim-sfcb/sfcb_1.4.9-0ubuntu5_amd64.deb
+  wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-cmpi-devel/libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb
+  dpkg -i libwsman-curl-client-transport1_2.6.5-0ubuntu3_amd64.deb
+  dpkg -i libwsman-client4_2.6.5-0ubuntu3_amd64.deb
+  dpkg -i libwsman1_2.6.5-0ubuntu3_amd64.deb
+  dpkg -i libwsman-server1_2.6.5-0ubuntu3_amd64.deb
+  dpkg -i libcimcclient0_2.2.8-0ubuntu2_amd64.deb
+  dpkg -i openwsman_2.6.5-0ubuntu3_amd64.deb
+  dpkg -i cim-schema_2.48.0-0ubuntu1_all.deb
+  dpkg -i libsfcutil0_1.0.1-0ubuntu4_amd64.deb
+  dpkg -i sfcb_1.4.9-0ubuntu5_amd64.deb
+  dpkg -i libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb
+  rm "$SCRIPTPATH/libwsman-curl-client-transport1_2.6.5-0ubuntu3_amd64.deb"
+  rm "$SCRIPTPATH/libwsman-client4_2.6.5-0ubuntu3_amd64.deb"
+  rm "$SCRIPTPATH/libwsman1_2.6.5-0ubuntu3_amd64.deb"
+  rm "$SCRIPTPATH/libwsman-server1_2.6.5-0ubuntu3_amd64.deb"
+  rm "$SCRIPTPATH/libcimcclient0_2.2.8-0ubuntu2_amd64.deb"
+  rm "$SCRIPTPATH/openwsman_2.6.5-0ubuntu3_amd64.deb"
+  rm "$SCRIPTPATH/cim-schema_2.48.0-0ubuntu1_all.deb"
+  rm "$SCRIPTPATH/libsfcutil0_1.0.1-0ubuntu4_amd64.deb"
+  rm "$SCRIPTPATH/sfcb_1.4.9-0ubuntu5_amd64.deb"
+  rm "$SCRIPTPATH/libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb"
+fi
 
 ### End Phase 3
-echo
 phasefooter $PHASE
 
 #===========================================================================================================================================
@@ -392,12 +369,17 @@ sleep 1
 #===========================================================================================================================================
 # Install Everything!
 
+if [ $DEBUG -eq 1 ]
+then
+  echo -e "\e[96m++ $PHASE - apt update\e[39m"
+  echo -e "\e[96m++ $PHASE - apt install srvadmin-all libncurses5 libxslt-dev\e[39m"
+else
   echo
   apt update
   apt install srvadmin-all libncurses5 libxslt-dev -y
+fi
 
 ### End Phase 4
-echo
 phasefooter $PHASE
 
 #===========================================================================================================================================
@@ -408,8 +390,13 @@ sleep 1
 #===========================================================================================================================================
 # Restart Service
 
+if [ $DEBUG -eq 1 ]
+then
+  echo -e "\e[96m++ $PHASE - /opt/dell/srvadmin/sbin/srvadmin-services.sh restart\e[39m"
+else
   echo
   /opt/dell/srvadmin/sbin/srvadmin-services.sh restart
+fi
 
 # End Phase 5
 phasefooter $PHASE
