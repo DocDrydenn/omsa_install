@@ -293,6 +293,7 @@ sleep 1
 
 if [ $DEBUG -eq 1 ]
 then
+  echo -e "\e[96m++ $PHASE - wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb\e[39m"
   echo -e "\e[96m++ $PHASE - wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman-curl-client-transport1_2.6.5-0ubuntu3_amd64.deb\e[39m"
   echo -e "\e[96m++ $PHASE - wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman-client4_2.6.5-0ubuntu3_amd64.deb\e[39m"
   echo -e "\e[96m++ $PHASE - wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman1_2.6.5-0ubuntu3_amd64.deb\e[39m"
@@ -303,6 +304,7 @@ then
   echo -e "\e[96m++ $PHASE - wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-sfc-common/libsfcutil0_1.0.1-0ubuntu4_amd64.deb\e[39m"
   echo -e "\e[96m++ $PHASE - wget http://archive.ubuntu.com/ubuntu/pool/multiverse/s/sblim-sfcb/sfcb_1.4.9-0ubuntu5_amd64.deb\e[39m"
   echo -e "\e[96m++ $PHASE - wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-cmpi-devel/libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb\e[39m"
+  echo -e "\e[96m++ $PHASE - dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb\e[39m"
   echo -e "\e[96m++ $PHASE - dpkg -i libwsman-curl-client-transport1_2.6.5-0ubuntu3_amd64.deb\e[39m"
   echo -e "\e[96m++ $PHASE - dpkg -i libwsman-client4_2.6.5-0ubuntu3_amd64.deb\e[39m"
   echo -e "\e[96m++ $PHASE - dpkg -i libwsman1_2.6.5-0ubuntu3_amd64.deb\e[39m"
@@ -326,6 +328,7 @@ then
 
 else
   echo
+  wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
   wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman-curl-client-transport1_2.6.5-0ubuntu3_amd64.deb
   wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman-client4_2.6.5-0ubuntu3_amd64.deb
   wget http://archive.ubuntu.com/ubuntu/pool/universe/o/openwsman/libwsman1_2.6.5-0ubuntu3_amd64.deb
@@ -336,6 +339,7 @@ else
   wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-sfc-common/libsfcutil0_1.0.1-0ubuntu4_amd64.deb
   wget http://archive.ubuntu.com/ubuntu/pool/multiverse/s/sblim-sfcb/sfcb_1.4.9-0ubuntu5_amd64.deb
   wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-cmpi-devel/libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb
+  dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb
   dpkg -i libwsman-curl-client-transport1_2.6.5-0ubuntu3_amd64.deb
   dpkg -i libwsman-client4_2.6.5-0ubuntu3_amd64.deb
   dpkg -i libwsman1_2.6.5-0ubuntu3_amd64.deb
@@ -346,6 +350,7 @@ else
   dpkg -i libsfcutil0_1.0.1-0ubuntu4_amd64.deb
   dpkg -i sfcb_1.4.9-0ubuntu5_amd64.deb
   dpkg -i libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb
+  rm "$SCRIPTPATH/libssl1.1_1.1.1f-1ubuntu2_amd64.deb"
   rm "$SCRIPTPATH/libwsman-curl-client-transport1_2.6.5-0ubuntu3_amd64.deb"
   rm "$SCRIPTPATH/libwsman-client4_2.6.5-0ubuntu3_amd64.deb"
   rm "$SCRIPTPATH/libwsman1_2.6.5-0ubuntu3_amd64.deb"
