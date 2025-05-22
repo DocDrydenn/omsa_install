@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERS="v2.9"
+VERS="v3.0"
 
 # Set Script Variables
 SCRIPT="$(readlink -f "$0")"
@@ -134,7 +134,7 @@ inoutheader() {
   echo -e "==================================================\e[39m"
   echo " Dell OMSA Installer Script $VERS"
   echo
-  echo " by DocDrydenn"
+  echo " by DocDrydenn, edited by WilliamLi0623"
   echo
 
   if [[ "$DEBUG" = "1" ]]; then echo -e "\e[5m\e[96m++ DEBUG ENABLED - SIMULATION ONLY ++\e[39m\e[0m"; echo; fi
@@ -273,11 +273,9 @@ then
   echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/0x1285491434D8786F.asc\e[39m"
 else
   echo
-  echo "deb https://$FINAL_URL $BUILD main" > /etc/apt/sources.list.d/linux.dell.com.sources.list
-  wget https://linux.dell.com/repo/pgp_pubkeys/0x1285491434D8786F.asc
-  apt-key add 0x1285491434D8786F.asc
+  echo "deb [signed-by=/usr/share/keyrings/dell-openmanage.gpg] https://$FINAL_URL $BUILD main" > /etc/apt/sources.list.d/linux.dell.com.sources.list
+  sudo gpg --no-default-keyring --keyring /usr/share/keyrings/dell-openmanage.gpg --keyserver keyserver.ubuntu.com --recv-keys 1285491434D8786F
   apt update
-  rm "$SCRIPTPATH/0x1285491434D8786F.asc"
 fi
 
 ### End Phase 2
@@ -336,6 +334,8 @@ else
   wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-sfc-common/libsfcutil0_1.0.1-0ubuntu4_amd64.deb
   wget http://archive.ubuntu.com/ubuntu/pool/multiverse/s/sblim-sfcb/sfcb_1.4.9-0ubuntu5_amd64.deb
   wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-cmpi-devel/libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb
+  wget http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.1_1.1.1w-0+deb11u2_amd64.deb
+  dpkg -i libssl1.1_1.1.1w-0+deb11u2_amd64.deb
   dpkg -i libwsman-curl-client-transport1_2.6.5-0ubuntu3_amd64.deb
   dpkg -i libwsman-client4_2.6.5-0ubuntu3_amd64.deb
   dpkg -i libwsman1_2.6.5-0ubuntu3_amd64.deb
@@ -356,6 +356,7 @@ else
   rm "$SCRIPTPATH/libsfcutil0_1.0.1-0ubuntu4_amd64.deb"
   rm "$SCRIPTPATH/sfcb_1.4.9-0ubuntu5_amd64.deb"
   rm "$SCRIPTPATH/libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb"
+  rm "$SCRIPTPATH/libssl1.1_1.1.1w-0+deb11u2_amd64.deb"
 fi
 
 ### End Phase 3
