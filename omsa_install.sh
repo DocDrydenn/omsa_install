@@ -356,6 +356,7 @@ else
   rm "$SCRIPTPATH/libsfcutil0_1.0.1-0ubuntu4_amd64.deb"
   rm "$SCRIPTPATH/sfcb_1.4.9-0ubuntu5_amd64.deb"
   rm "$SCRIPTPATH/libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb"
+  rm "$SCRIPTPATH/libssl1.1_1.1.1w-0+deb11u2_amd64.deb"
 fi
 
 ### End Phase 3
