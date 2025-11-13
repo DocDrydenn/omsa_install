@@ -334,8 +334,8 @@ else
   wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-sfc-common/libsfcutil0_1.0.1-0ubuntu4_amd64.deb
   wget http://archive.ubuntu.com/ubuntu/pool/multiverse/s/sblim-sfcb/sfcb_1.4.9-0ubuntu5_amd64.deb
   wget http://archive.ubuntu.com/ubuntu/pool/universe/s/sblim-cmpi-devel/libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb
-  wget http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.1_1.1.1w-0+deb11u2_amd64.deb
-  dpkg -i libssl1.1_1.1.1w-0+deb11u2_amd64.deb
+  wget http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.1_1.1.1w-0+deb11u4_amd64.deb
+  dpkg -i libssl1.1_1.1.1w-0+deb11u4_amd64.deb
   dpkg -i libwsman-curl-client-transport1_2.6.5-0ubuntu3_amd64.deb
   dpkg -i libwsman-client4_2.6.5-0ubuntu3_amd64.deb
   dpkg -i libwsman1_2.6.5-0ubuntu3_amd64.deb
@@ -356,7 +356,7 @@ else
   rm "$SCRIPTPATH/libsfcutil0_1.0.1-0ubuntu4_amd64.deb"
   rm "$SCRIPTPATH/sfcb_1.4.9-0ubuntu5_amd64.deb"
   rm "$SCRIPTPATH/libcmpicppimpl0_2.0.3-0ubuntu2_amd64.deb"
-  rm "$SCRIPTPATH/libssl1.1_1.1.1w-0+deb11u2_amd64.deb"
+  rm "$SCRIPTPATH/libssl1.1_1.1.1w-0+deb11u4_amd64.deb"
 fi
 
 ### End Phase 3
